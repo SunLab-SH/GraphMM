@@ -56,7 +56,7 @@ import numpy as np
 
 def plot_comparison(pf_results, ukf_results, surrogate_a, gt_data):
     fig, axs = plt.subplots(2, 3, figsize=(15, 8))
-    variables = ['D^B', 'S^B \ [pg/islet/min]', '\gamma^C', 'S^C \ [pg/cell/min]', 'G^C [mM]']
+    variables = ['D^B', 'S^B \\ [pg/islet/min]', '\\gamma^C', 'S^C \\ [pg/cell/min]', 'G^C [mM]']
     indices = [2, 4, 6, 8, 10]
 
     for i, (ax, var) in enumerate(zip(axs.ravel(), variables)):

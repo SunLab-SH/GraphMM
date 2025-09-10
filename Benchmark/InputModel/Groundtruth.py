@@ -10,7 +10,7 @@ The glucose stimulated insulin secretion pathway describes the process of insuli
 We include 4 variables to describe a simplified version of system:
 
 - cumulative glucose concentration from food digestion ($D_t$)
-- beta-cell activity ($\gamma_t$)
+- beta-cell activity ($\\gamma_t$)
 - insulin secretion amount of an islet ($I_t$)
 - plasma glucose concentration ($G_t$)
 

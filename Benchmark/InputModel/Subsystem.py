@@ -43,10 +43,10 @@ input_a_std = input_a*0.15
 
 
 '''
-### Submodel b: $\beta$-cell model
+### Submodel b: $\\beta$-cell model
 
-The $\beta$-cell model describes the change of insulin secretion amount ($I_t^b$) as a function of time, 
-$\beta$-cell activity ($\gamma_t$) and the plasma glucose concentration ($G_t^b$). 
+The $\\beta$-cell model describes the change of insulin secretion amount ($I_t^b$) as a function of time, 
+$\\beta$-cell activity ($\\gamma_t$) and the plasma glucose concentration ($G_t^b$). 
 
 '''
 
@@ -70,7 +70,7 @@ sim_time_b = 8 # min
 dt_b = 0.01 # min
 time_b = np.arange(0, sim_time_b, dt_b)
 n_step_b = len(time_b)
-model_var_b = [r'$\gamma^b$', r'$I_{cell}^b [pg/islet]$', r'$G^b [mM]$']
+model_var_b = [r'$\\gamma^b$', r'$I_{cell}^b [pg/islet]$', r'$G^b [mM]$']
 input_b = scipy.integrate.odeint(ODEModel_b, [gamma_0, I_0, G_0], time_b)
 input_b_std = input_b*0.15
 # plot_inputmodel(input_b, dt=dt_b, sim_time=sim_time_b, name=model_var_b)

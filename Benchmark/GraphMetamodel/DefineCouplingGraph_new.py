@@ -128,17 +128,8 @@ class coupling_graph:
         ma_std = self.model_states[list(self.model_idx.keys())[0]][:,:,1]
         mb_mean = self.model_states[list(self.model_idx.keys())[1]][:,:,0]
         mb_std = self.model_states[list(self.model_idx.keys())[1]][:,:,1]
-
-        # ########################## 
-        #
-        # TBD:
-        # 1. m1 total time larger than m2 total time
-        # 2. decide the time interval for model coupling if the models doesn't end at the same time
-        #
-        #
-        # ##########################
+        
         if ma.dt > mb.dt:
-            print('run this')
 
             ts_scale = round(ma.dt/mb.dt)
             _, _, overlap_steps = compute_overlap_steps(ma.dt, mb.dt, ma.total_time, mb.total_time,ma_scale,mb_scale)

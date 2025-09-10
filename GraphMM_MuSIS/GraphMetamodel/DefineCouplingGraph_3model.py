@@ -152,7 +152,6 @@ class coupling_graph:
         mb_std = self.model_states[pair_c][mb_idx][:,:,1]
 
         if ma.dt > mb.dt:
-            print('run this')
 
             ts_scale = round(ma.dt/mb.dt)
             _, _, overlap_steps = compute_overlap_steps(ma.dt, mb.dt, ma.total_time, mb.total_time,ma_scale,mb_scale)
