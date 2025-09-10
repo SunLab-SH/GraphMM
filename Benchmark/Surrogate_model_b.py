@@ -2,7 +2,7 @@
 
 from GraphMetamodel.utils import *
 from InputModel.Subsystem import *
-from GraphMetamodel.SurrogateModel import *
+from GraphMetamodel.SurrogateModel_new import *
 import numpy as np
 import random
 
@@ -33,8 +33,6 @@ def run_surrogate_model_b(method, mean_scale, transition_cov_scale, emission_cov
         surrogate_b = SurrogateInputModel(name='model_b',
                                           state=model_var_b, 
                                           initial=np.array([gamma_0, I_0, G_0]),
-                                          initial_noise_scale=0.01,
-                                          measure_std_scale=0.01,
                                           fx=fx_model_b, dt=dt_b, input_dt=dt_b, total_time=sim_time_b, 
                                           transition_cov_scale=transition_cov_scale,
                                           emission_cov_scale=emission_cov_scale, noise_model_type='time-variant',
@@ -53,5 +51,14 @@ if __name__ == "__main__":
     surrogate_b = run_surrogate_model_b(method='MultiScale', mean_scale=1,
                                         transition_cov_scale=0.01, emission_cov_scale=1,
                                         save_path='./results/surrogate_model_b.csv')
+
+    a = np.genfromtxt('./results/surrogate_model_b_new.csv', delimiter=',', skip_header=1)
+    b = np.genfromtxt('./results/surrogate_model_b.csv', delimiter=',')
+    for i in range(3):
+        plt.plot(a[:, i*2])
+        plt.fill_between(np.arange(0, len(a[:, i*2]), 1), a[:, i*2]-a[:, i*2+1], a[:, i*2]+a[:, i*2+1], alpha=0.1)
+        plt.plot(b[:, i*2])
+        plt.fill_between(np.arange(0, len(b[:, i*2]), 1), b[:, i*2]-b[:, i*2+1], b[:, i*2]+b[:, i*2+1], alpha=0.1)
+        plt.show()
 
 # %%

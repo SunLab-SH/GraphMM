@@ -28,6 +28,7 @@ class MetaModel:
 
         self.total_time_list = [self.coupling_graph.model_idx[key].total_time for key in self.coupling_graph.model_idx]
         self.dt_list = [self.coupling_graph.model_idx[key].dt for key in self.coupling_graph.model_idx]
+        # TBD: consider if the min_dt is not the factor of all dt, update the min_dt if the min_dt model ends
         self.min_dt = min(self.dt_list)
         self.max_total_time = max(self.total_time_list)
         self.max_n_step = len(np.arange(0, self.max_total_time, self.min_dt, dtype=float))
@@ -72,6 +73,9 @@ class MetaModel:
            
         Meta_mean_t0 = np.array(coupling_var_state_mean_t0 + model_var_state_mean_t0)
         # by default, the initial covariance matrix of the metamodel is diagnal, unless additional info is given
+        # TBD: square maybe not correct
+        print(coupling_var_state_std_t0)
+        print(model_var_state_std_t0)
         Meta_cov_t0 = np.diag(np.array(coupling_var_state_std_t0 + model_var_state_std_t0))**2
 
         return Meta_mean_t0, Meta_cov_t0
@@ -210,7 +214,7 @@ class MetaModel:
         return surrogate_ts.x, surrogate_ts.P
 
     
-    def inference(self, test_omega=[0.5, 0.5], filepath=None, verbose=1):
+    def inference(self, test_omega, filepath=None, verbose=1):
 
         if verbose==1:
             print('******** Metamodel info ********')
