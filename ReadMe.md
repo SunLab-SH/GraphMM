@@ -48,11 +48,7 @@ ipykernel        6.15.2
 ```
 
 ### Benchmark - Toy GSIS metamodel
-To run the metamodel enumeration:
-1. Ensure all required dependencies are installed
-2. Run `enumerate_metamodel.py`
-3. Results will be saved in the `results/enumerate_metamodel_v2/` directory
-4. Visualizations can be generated using the plotting functions in the script
+1. To run the metamodel enumeration:
 
 ```bash
 cd Benchmark
@@ -60,12 +56,18 @@ python Surrogate_model_a.py
 python Surrogate_model_b.py
 ```
 
+2. Results will be saved in the `results/` directory
+3. Check whether the variable is correctly coupled using the plotting functions in the script
+
+```bash
+python plot_coupling.py
+```
+
+
+
+
 ### Multiscale β-cell metamodel (MuBCM)
-To run the MuBCM metamodel:
-1. Ensure all required dependencies are installed
-2. Run `metamodel_inference.py`
-3. Results will be saved in the `results/metamodel_inference/` directory
-4. Visualizations can be generated using the plotting functions in the script
+1. To run the MuBCM metamodel:
 
 ```bash
 cd GraphMM_MuBCM
@@ -73,6 +75,13 @@ python run_surrogate_ISK_active.py
 python run_surrogate_ICN_active.py
 python run_surrogate_VE_active.py
 python run_MuBCM_metamodel_active.py
+```
+
+2. Results will be saved in the `results/` directory
+3. Visualizations can be generated using the plotting functions in the script
+
+```bash
+python visulize.py
 ```
 
 
