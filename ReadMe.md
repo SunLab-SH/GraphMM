@@ -57,12 +57,11 @@ python Surrogate_model_b.py
 ```
 
 2. Results will be saved in the `results/` directory
-3. Check whether the variable is correctly coupled using the plotting functions in the script
+3. Visualizations can be generated using the plotting functions in the script
 
 ```bash
-python plot_coupling.py
+python visulize.py
 ```
-
 
 
 
@@ -77,11 +76,11 @@ python run_surrogate_VE_active.py
 python run_MuBCM_metamodel_active.py
 ```
 
-2. Results will be saved in the `results/` directory
-3. Visualizations can be generated using the plotting functions in the script
+2. Results will be saved in the `results/` directory、
+3. Check whether the variable is correctly coupled using the plotting functions in the script
 
 ```bash
-python visulize.py
+python plot_coupling.py
 ```
 
 
