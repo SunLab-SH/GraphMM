@@ -2,15 +2,14 @@
 
 This is the official repository for GraphMM, a Python package to uncover cell dynamics and function across molecular, cellular, and multicellular scales.
 
+<p align="center">
+  <img src="./ascii-art-text.png" width="800"/>
+</p>
+
 # Introduction
 
 We introduce Graph-based Metamodeling (GraphMM), a novel framework that integrates models across multiple representations and spatiotemporal scales, by (i) converting input models into universal surrogate representations using probabilistic graphical models; (ii) coupling surrogates across time scales using a standardized strategy; and (iii) approximate metamodel inference. Validation through synthetic benchmarks and real-world applications shows improved accuracy over existing methods. GraphMM enables quantitative predictions of $\beta$-cell dynamics and function across molecular, cellular, and multicellular scales. GraphMM provides a versatile framework for integrating models to uncover the dynamics of complex systems. 
 For detailed documentation, please visit: https://graphmm.readthedocs.io/
-
-<p align="center">
-  <img src="./GraphMM.png" width="800"/>
-</p>
-
 
 # Repo Structure
 
@@ -26,9 +25,7 @@ The project contains a benchmark and a Multiscale β-cell metamodel (MuBCM), bot
         - Defines connections between surrogate models
         - Implements multi-scale inference
     - `results/`:
-        - Stores output files from model simulations   
-
-
+        - Stores output files from model simulations 
 
 # Usage
 
@@ -48,42 +45,59 @@ ipykernel        6.15.2
 ```
 
 ### Benchmark - Toy GSIS metamodel
-1. To run the metamodel enumeration:
-
+* 1. Prepare and check input model:
 ```bash
-cd Benchmark
-python Surrogate_model_a.py
-python Surrogate_model_b.py
+cd InputModel
+python Subsystem.py #plot_inputmodel will show the results of input model
 ```
 
-2. Results will be saved in the `results/` directory
-3. Visualizations can be generated using the plotting functions in the script
+* 2. Convert input model into surrogate model:
+```bash
+python Surrogate_model_a.py  #Convert Input model a into Surrogate model a
+python Surrogate_model_b.py  #Convert Input model b into Surrogate model b
+```
+plot_surrogatemodel will show the results of surrogate model
+Results will be saved in the `results/surrogate_model_{i}.csv` directory
 
+* 3. Run metamodel of the two toy models
+```bash
+python compare_PF_UKF.py # 
+```
+The distributions of metamodel variables are then estimated using Unscented Kalman Filters (UKFs) for Gaussian distributions and Particle Filters (PF) for non‑Gaussian distributions
+
+* 4. Visualizations can be generated using the plotting functions in the script
 ```bash
 python visulize.py
 ```
 
 
-
 ### Multiscale β-cell metamodel (MuBCM)
-1. To run the MuBCM metamodel:
-
+* 1. Prepare and check input model:
 ```bash
-cd GraphMM_MuBCM
-python run_surrogate_ISK_active.py
-python run_surrogate_ICN_active.py
-python run_surrogate_VE_active.py
-python run_MuBCM_metamodel_active.py
+cd InputModel/Input_ICN  # Firstly, run ICN input model to get potential of cells 
+python IsletHubCell_forward_function_sec.py # The unit of ICN model is 'second'
 ```
+Input results will be saved in the `'./InputModel/Input_ICN/input_ICN_600s_nohub/` directory.
 
-2. Results will be saved in the `results/` directory
-3. Check whether the variable is correctly coupled using the plotting functions in the script
+* 2. Convert input model into surrogate model:
+```bash
+python run_surrogate_ISK_active.py # The unit of ISK model is 'minute'
+python run_surrogate_ICN_active.py
+python run_surrogate_VE_active.py  # The unit of ISK model is 'minute'
+```
+Surrogate results will be saved in the `'./results/surrogate_{cell_number}_600s_nohub/` directory.
 
+* 3. Run metamodel of the three surrogate models
+```bash
+python run_MuBCM_metamodel_active.py  # The units of the ICN model will be unified to minutes.
+```
+Metamodel results will be saved in the `'./results/Metamodel_VE_ICN_ISK_600s_nohub/` directory.
+All variable values of the three models after metamodel updating will be stored in Metamodel_VE_IHC_ISK_600s_nohub_{cell_number}.csv files, with one column for the mean and one column for the standard deviation. Since each Metamodel_VE_IHC_ISK_600s_nohub_{cell_number}.csv file is very large, you can extract the columns of interest as needed.
+
+* 4. Check whether the variable is correctly coupled using the plotting functions in the script
 ```bash
 python plot_coupling.py
 ```
-
-
 
 # Citation
 
