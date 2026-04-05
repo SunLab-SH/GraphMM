@@ -3,7 +3,7 @@
 This is the official repository for GraphMM, a Python package to uncover cell dynamics and function across molecular, cellular, and multicellular scales.
 
 <p align="center">
-  <img src="./ascii-art-text.png" width="800"/>
+  <img src="./log.png" width="800"/>
 </p>
 
 # Introduction
