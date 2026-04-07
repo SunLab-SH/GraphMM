@@ -56,7 +56,7 @@ python Subsystem.py #plot_inputmodel will show the results of input model
 python Surrogate_model_a.py  #Convert Input model a into Surrogate model a
 python Surrogate_model_b.py  #Convert Input model b into Surrogate model b
 ```
-plot_surrogatemodel will show the results of surrogate model
+plot_surrogatemodel will show the results of surrogate model.
 Results will be saved in the `results/surrogate_model_{i}.csv` directory
 
 * 3. Run metamodel of the two toy models
