@@ -15,45 +15,45 @@ For detailed documentation, please visit: https://graphmm.readthedocs.io/
 
 This protocol describes how to use GraphMM to couple two input models that share **one common variable** (e.g., a concentration, secretion rate, or any other biological quantity). It follows a three‑stage graph‑based metamodeling framework. For a ready‑to‑run example, see the [**Benchmark - Toy GSIS metamodel**](#benchmark---toy-gsis-metamodel).
 
-### Step 1 – Identify the two input models and the connecting variable
+## Step 1 – Identify the two input models and the connecting variable
 
-Assume we have two models `M1` and `M2`. They may operate on different time scales.  
-Find a **connecting variable** `b` that appears (or has a semantic equivalent) in both models.  
+Assume we have two models $M1$ and $M2$. They may operate on different time scales.  
+Find a **connecting variable** $b$ that appears (or has a semantic equivalent) in both models.  
 Example:  
-- `M1` outputs insulin secretion rate `S<sup>C</sup>` (cell model).  
-- `M2` uses insulin secretion rate `S<sup>B</sup>` (body model).
+- $M1$ outputs insulin secretion rate $S^C$ (cell model).  
+- $M2$ uses insulin secretion rate $S^B$ (body model).
 
-### Step 2 – Convert each input model into a probabilistic surrogate (Stage 1)
+## Step 2 – Convert each input model into a probabilistic surrogate (Stage 1)
 
-For each model `M^i` (`i=1,2`), build a State‑Space Model (SSM) – a probabilistic graphical model.
+For each model $M^i$ ($i=1,2$), build a State‑Space Model (SSM) – a probabilistic graphical model.
 
-Extract the state variables `Z^i_t = (a^i_t, b^i_t)` and define the **process model**:
+Extract the state variables $Z^i_t = (a^i_t, b^i_t)$ and define the process model:
 
 $$
 p(Z^i_{t+1} \mid Z^i_t) = \mathcal{N}\bigl( f^i(a^i_t, b^i_t),\; \phi^i_t \bigr)
 $$
 
-- `f^i` is the forward function (e.g., ODEs) from the input model.
-- `ϕ^i_t` is transition noise (e.g., 10⁻³ of the variable mean).
+- $f^i$ is the forward function (e.g., ODEs) from the input model.
+- $\phi^i_t$ is transition noise (e.g., $10^{-3}$ of the variable mean).
 
-If desired, also define an **observation model**:
+If desired, also define an observation model:
 
 $$
 p(O^i_t \mid Z^i_t) = \mathcal{N}\bigl( g^i(a^i_t, b^i_t),\; \epsilon^i_t \bigr)
 $$
 
-### Step 3 – Unify time steps across models (Stage 2)
+## Step 3 – Unify time steps across models (Stage 2)
 
-Choose a universal time step `Δt` (e.g., the smallest native time step).  
-- For a model with a **smaller** native time step, redefine the process model at `Δt` using the original forward function; the observation model is subsampled or interpolated.  
-- For a model with a **larger** native time step, also redefine the process model at `Δt`; the observation model is linearly interpolated (if experimental data exist) or kept identical.
+Choose a universal time step $\Delta t$ (e.g., the smallest native time step).  
+- For a model with a **smaller** native time step, redefine the process model at $\Delta t$ using the original forward function; the observation model is subsampled or interpolated.  
+- For a model with a **larger** native time step, also redefine the process model at $\Delta t$; the observation model is linearly interpolated (if experimental data exist) or kept identical.
 
-### Step 4 – Couple the two surrogates via the shared variable
+## Step 4 – Couple the two surrogates via the shared variable
 
-Let the connecting variables be `b^1` (from `M1`) and `b^2` (from `M2`).  
-Assume Gaussian distributions at each time step: `p(b^1_t) = N(μ₁,σ₁²)`, `p(b^2_t) = N(μ₂,σ₂²)`.
+Let the connecting variables be $b^1$ (from $M1$) and $b^2$ (from $M2$).  
+Assume Gaussian distributions at each time step: $p(b^1_t) = N(\mu_1,\sigma_1^2)$, $p(b^2_t) = N(\mu_2,\sigma_2^2)$.
 
-**4.1 Introduce a latent coupling variable** `c_t` with a mixture prior (equal weights):
+**4.1 Introduce a latent coupling variable** $c_t$ with a mixture prior (equal weights):
 
 $$
 p(c_t) = \mathcal{N}\bigl( h(b^1_t,b^2_t),\; \rho_t \bigr)
@@ -65,7 +65,7 @@ $$
 \rho_t^2 = 0.5\sigma_1^2 + 0.5\sigma_2^2 + 0.5\times0.5\,(\mu_1-\mu_2)^2
 $$
 
-**4.2 Build the coupling graph** with directed edges: `b^1_t ← c_t → b^2_t`.  
+**4.2 Build the coupling graph** with directed edges: $b^1_t \leftarrow c_t \rightarrow b^2_t$.  
 Define the conditional distributions (predictive update) as a weighted combination of the coupling variable and the original model dynamics:
 
 $$
@@ -75,16 +75,16 @@ $$
 p(b^2_{t+1} \mid c_t, a^2_t, b^2_t) = \mathcal{N}\Bigl( \omega_2\,c_t + (1-\omega_2)\,f^2(a^2_t,b^2_t),\; \phi^2_t \Bigr)
 $$
 
-Here `ω₁` and `ω₂` are weights determined by the overlap of the coupling variable distribution with each connecting variable distribution. When no prior knowledge exists, set both to 0.5.
+Here $\omega_1$ and $\omega_2$ are weights determined by the overlap of the coupling variable distribution with each connecting variable distribution. When no prior knowledge exists, set both to $0.5$.
 
-### Step 5 – Perform metamodel inference (Stage 3)
+## Step 5 – Perform metamodel inference (Stage 3)
 
-Build a factor graph containing all state variables `Z^i` and the coupling variable `c`. Use:
+Build a factor graph containing all state variables $Z^i$ and the coupling variable $c$. Use:
 
 - **Unscented Kalman Filter (UKF)** if all variables are approximately Gaussian,
 - **Particle Filter (PF)** for non‑Gaussian distributions (higher accuracy, but slower).
 
-Recursively apply the **predict‑update** cycle:
+Recursively apply the predict‑update cycle:
 
 - **Predict:**  
   $$
@@ -98,14 +98,14 @@ Recursively apply the **predict‑update** cycle:
 
 The resulting metamodel outputs mean and standard deviation for all original state variables and the coupling variable.
 
-### Step 6 – Practical recommendations
+## Step 6 – Practical recommendations
 
 - **Connecting variable selection:** If the two models do not share an identical variable, choose the pair with the highest Pearson correlation coefficient (as in the VE‑ISK coupling in the paper).
 - **Time‑step selection:** Ensure the ODE solver remains stable at the chosen universal time step.
-- **Noise calibration:** Set transition noise `ϕ` and emission noise `ε` as fractions (e.g., 0.001–0.01) of the variable’s mean value to preserve biological variability.
+- **Noise calibration:** Set transition noise $\phi$ and emission noise $\epsilon$ as fractions (e.g., $0.001$–$0.01$) of the variable’s mean value to preserve biological variability.
 - **Inference choice:** Start with UKF for speed; switch to PF if you observe strong non‑Gaussianity.
 
-For a complete runnable implementation of this protocol, refer to the `Benchmark/` folder (toy GSIS metamodel) or the Colab notebook linked below.
+For a complete runnable implementation of this protocol, refer to the `Benchmark/` folder (toy GSIS metamodel) or the **Colab notebook linked** below.
 
 # Repo Structure
 
