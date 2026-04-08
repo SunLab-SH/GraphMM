@@ -11,73 +11,73 @@ This is the official repository for GraphMM, a Python package to uncover cell dy
 We introduce Graph-based Metamodeling (GraphMM), a novel framework that integrates models across multiple representations and spatiotemporal scales, by (i) converting input models into universal surrogate representations using probabilistic graphical models; (ii) coupling surrogates across time scales using a standardized strategy; and (iii) approximate metamodel inference. Validation through synthetic benchmarks and real-world applications shows improved accuracy over existing methods. GraphMM enables quantitative predictions of $\beta$-cell dynamics and function across molecular, cellular, and multicellular scales. GraphMM provides a versatile framework for integrating models to uncover the dynamics of complex systems. 
 For detailed documentation, please visit: https://graphmm.readthedocs.io/
 
-# Protocol: Applying GraphMM to a custom system with two models sharing one variable
+# Protocol
 
 This protocol describes how to use GraphMM to couple two input models that share **one common variable** (e.g., a concentration, secretion rate, or any other biological quantity). It follows a three‑stage graph‑based metamodeling framework. For a ready‑to‑run example, see the [**Benchmark - Toy GSIS metamodel**](#benchmark---toy-gsis-metamodel).
 
-## Step 1 – Identify the two input models and the connecting variable
+### Step 1 – Identify the two input models and the connecting variable
 
 Assume we have two models `M1` and `M2`. They may operate on different time scales.  
 Find a **connecting variable** `b` that appears (or has a semantic equivalent) in both models.  
 Example:  
-- `M1` outputs insulin secretion rate `S^C` (cell model).  
-- `M2` uses insulin secretion rate `S^B` (body model).
+- `M1` outputs insulin secretion rate `S<sup>C</sup>` (cell model).  
+- `M2` uses insulin secretion rate `S<sup>B</sup>` (body model).
 
-## Step 2 – Convert each input model into a probabilistic surrogate (Stage 1)
+### Step 2 – Convert each input model into a probabilistic surrogate (Stage 1)
 
 For each model `M^i` (`i=1,2`), build a State‑Space Model (SSM) – a probabilistic graphical model.
 
 Extract the state variables `Z^i_t = (a^i_t, b^i_t)` and define the **process model**:
 
-\[
+$$
 p(Z^i_{t+1} \mid Z^i_t) = \mathcal{N}\bigl( f^i(a^i_t, b^i_t),\; \phi^i_t \bigr)
-\]
+$$
 
 - `f^i` is the forward function (e.g., ODEs) from the input model.
 - `ϕ^i_t` is transition noise (e.g., 10⁻³ of the variable mean).
 
 If desired, also define an **observation model**:
 
-\[
+$$
 p(O^i_t \mid Z^i_t) = \mathcal{N}\bigl( g^i(a^i_t, b^i_t),\; \epsilon^i_t \bigr)
-\]
+$$
 
-## Step 3 – Unify time steps across models (Stage 2)
+### Step 3 – Unify time steps across models (Stage 2)
 
 Choose a universal time step `Δt` (e.g., the smallest native time step).  
 - For a model with a **smaller** native time step, redefine the process model at `Δt` using the original forward function; the observation model is subsampled or interpolated.  
 - For a model with a **larger** native time step, also redefine the process model at `Δt`; the observation model is linearly interpolated (if experimental data exist) or kept identical.
 
-## Step 4 – Couple the two surrogates via the shared variable
+### Step 4 – Couple the two surrogates via the shared variable
 
 Let the connecting variables be `b^1` (from `M1`) and `b^2` (from `M2`).  
 Assume Gaussian distributions at each time step: `p(b^1_t) = N(μ₁,σ₁²)`, `p(b^2_t) = N(μ₂,σ₂²)`.
 
 **4.1 Introduce a latent coupling variable** `c_t` with a mixture prior (equal weights):
 
-\[
+$$
 p(c_t) = \mathcal{N}\bigl( h(b^1_t,b^2_t),\; \rho_t \bigr)
-\]
-\[
+$$
+$$
 h(b^1_t,b^2_t) = 0.5\mu_1 + 0.5\mu_2
-\]
-\[
+$$
+$$
 \rho_t^2 = 0.5\sigma_1^2 + 0.5\sigma_2^2 + 0.5\times0.5\,(\mu_1-\mu_2)^2
-\]
+$$
 
 **4.2 Build the coupling graph** with directed edges: `b^1_t ← c_t → b^2_t`.  
 Define the conditional distributions (predictive update) as a weighted combination of the coupling variable and the original model dynamics:
 
-\[
+$$
 p(b^1_{t+1} \mid c_t, a^1_t, b^1_t) = \mathcal{N}\Bigl( \omega_1\,c_t + (1-\omega_1)\,f^1(a^1_t,b^1_t),\; \phi^1_t \Bigr)
-\]
-\[
+$$
+$$
 p(b^2_{t+1} \mid c_t, a^2_t, b^2_t) = \mathcal{N}\Bigl( \omega_2\,c_t + (1-\omega_2)\,f^2(a^2_t,b^2_t),\; \phi^2_t \Bigr)
-\]
+$$
 
 Here `ω₁` and `ω₂` are weights determined by the overlap of the coupling variable distribution with each connecting variable distribution. When no prior knowledge exists, set both to 0.5.
 
-## Step 5 – Perform metamodel inference (Stage 3)
+### Step 5 – Perform metamodel inference (Stage 3)
 
 Build a factor graph containing all state variables `Z^i` and the coupling variable `c`. Use:
 
@@ -87,18 +87,18 @@ Build a factor graph containing all state variables `Z^i` and the coupling varia
 Recursively apply the **predict‑update** cycle:
 
 - **Predict:**  
-  \[
+  $$
   P(Z_t \mid O_{1:t-1}) = \int_{Z_{t-1}} \int_{c_t} P(Z_t, c_t \mid Z_{t-1}) \, dc_t \; P(Z_{t-1} \mid O_{1:t-1}) \, dZ_{t-1}
-  \]
+  $$
 
 - **Update (Bayes):**  
-  \[
+  $$
   P(Z_t \mid O_{1:t}) = \frac{P(O_t \mid Z_t)\,P(Z_t \mid O_{1:t-1})}{P(O_t \mid O_{1:t-1})}
-  \]
+  $$
 
 The resulting metamodel outputs mean and standard deviation for all original state variables and the coupling variable.
 
-## Step 6 – Practical recommendations
+### Step 6 – Practical recommendations
 
 - **Connecting variable selection:** If the two models do not share an identical variable, choose the pair with the highest Pearson correlation coefficient (as in the VE‑ISK coupling in the paper).
 - **Time‑step selection:** Ensure the ODE solver remains stable at the chosen universal time step.
