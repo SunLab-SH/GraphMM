@@ -30,7 +30,7 @@ For each model $M^i$ ($i=1,2$), build a State‑Space Model (SSM) – a probabil
 Extract the state variables $Z^i_t = (a^i_t, b^i_t)$ and define the process model:
 
 $$
-p(Z^i_{t+1} \mid Z^i_t) = \mathcal{N}\bigl( f^i(a^i_t, b^i_t),\; \phi^i_t \bigr)
+p(Z^i_{t+1} \mid Z^i_t) = \mathcal{N}\bigl( f(a^i_t, b^i_t), \phi^i_t \bigr)
 $$
 
 - $f^i$ is the forward function (e.g., ODEs) from the input model.
@@ -39,7 +39,7 @@ $$
 If desired, also define an observation model:
 
 $$
-p(O^i_t \mid Z^i_t) = \mathcal{N}\bigl( g^i(a^i_t, b^i_t),\; \epsilon^i_t \bigr)
+p(O^i_t \mid Z^i_t) = \mathcal{N}\bigl( g(a^i_t, b^i_t), \epsilon^i_t \bigr)
 $$
 
 ## Step 3 – Unify time steps across models (Stage 2)
@@ -51,28 +51,28 @@ Choose a universal time step $\Delta t$ (e.g., the smallest native time step).
 ## Step 4 – Couple the two surrogates via the shared variable
 
 Let the connecting variables be $b^1$ (from $M1$) and $b^2$ (from $M2$).  
-Assume Gaussian distributions at each time step: $p(b^1_t) = N(\mu_1,\sigma_1^2)$, $p(b^2_t) = N(\mu_2,\sigma_2^2)$.
+Assume Gaussian distributions at each time step: $p(b^1_t) = N(\mu^{b1},\sigma^{b1})$, $p(b^2_t) = N(\mu^{b2},\sigma^{b2})$.
 
 **4.1 Introduce a latent coupling variable** $c_t$ with a mixture prior (equal weights):
 
 $$
-p(c_t) = \mathcal{N}\bigl( h(b^1_t,b^2_t),\; \rho_t \bigr)
+p(c_t^{12}) = \mathcal{N}\bigl( h(b^1_t,b^2_t), \rho_t \bigr)
 $$
 $$
-h(b^1_t,b^2_t) = 0.5\mu_1 + 0.5\mu_2
+h(b^1_t,b^2_t) = 0.5\mu^{b1} + 0.5\mu^{b2}
 $$
 $$
-\rho_t^2 = 0.5\sigma_1^2 + 0.5\sigma_2^2 + 0.5\times0.5\,(\mu_1-\mu_2)^2
+(\rho_t)^2 = 0.5(\sigma^{b1})^2 + 0.5(\sigma^{b2})^2 + 0.5\times0.5\(\mu^{b1}-\mu^{b2})^2
 $$
 
-**4.2 Build the coupling graph** with directed edges: $b^1_t \leftarrow c_t \rightarrow b^2_t$.  
+**4.2 Build the coupling graph** with directed edges: $b^1_t \leftarrow c_t^{12} \rightarrow b^2_t$.  
 Define the conditional distributions (predictive update) as a weighted combination of the coupling variable and the original model dynamics:
 
 $$
-p(b^1_{t+1} \mid c_t, a^1_t, b^1_t) = \mathcal{N}\Bigl( \omega_1\,c_t + (1-\omega_1)\,f^1(a^1_t,b^1_t),\; \phi^1_t \Bigr)
+p(b^1_{t+1} \mid c_t^{12}, a^1_t, b^1_t) = \mathcal{N}\Bigl( \omega_t^1 y_t + (1-\omega_t^1) f^1(a^1_t,b^1_t), \phi^1_t \Bigr)
 $$
 $$
-p(b^2_{t+1} \mid c_t, a^2_t, b^2_t) = \mathcal{N}\Bigl( \omega_2\,c_t + (1-\omega_2)\,f^2(a^2_t,b^2_t),\; \phi^2_t \Bigr)
+p(b^2_{t+1} \mid c_t^{12}, a^2_t, b^2_t) = \mathcal{N}\Bigl( \omega_t^2 y_t + (1-\omega_t^2) f^2(a^2_t,b^2_t), \phi^2_t \Bigr)
 $$
 
 Here $\omega_1$ and $\omega_2$ are weights determined by the overlap of the coupling variable distribution with each connecting variable distribution. When no prior knowledge exists, set both to $0.5$.
@@ -87,13 +87,14 @@ Build a factor graph containing all state variables $Z^i$ and the coupling varia
 Recursively apply the predict‑update cycle:
 
 - **Predict:**  
-  $$
-  P(Z_t \mid O_{1:t-1}) = \int \int P(Z_t, c_t \mid Z_{t-1}) \, p(Z_{t-1} \mid O_{1:t-1}) \, dc_t \, dZ_{t-1}
-  $$
+$$
+P(Z_t \mid O_{1:t-1}) = \int_{Z_{t-1}} \int_{c_t} P(Z_t, C_t \mid Z_{t-1}) dC_t P(Z_{t-1} \mid O_{1:t-1}) dZ_{t-1}
+$$
 
 - **Update (Bayes):**  
-  $$
-  P(Z_t \mid O_{1:t}) = \frac{P(O_t \mid Z_t) \, P(Z_t \mid O_{1:t-1})}{P(O_t \mid O_{1:t-1})}
+$$
+P(Z_t \mid O^1_{1:t}) = \frac{P(O_t \mid Z_t) P(Z_t \mid O_{1:t-1})}{P(O_t \mid O_{1:t-1})}
+$$
 
 The resulting metamodel outputs mean and standard deviation for all original state variables and the coupling variable.
 
