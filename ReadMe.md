@@ -87,10 +87,10 @@ Build a factor graph containing all state variables $Z^i$ and the coupling varia
 Recursively apply the predict‑update cycle:
 
 - **Predict:**  
-$P (Z_t \mid O_{1:t-1}) = \int_{Z_{t-1}} \int_{c_t} P (Z_t, C_t \mid Z_{t-1}) dC_t P (Z_{t-1} \mid O_{1:t-1}) dZ_{t-1}$
+$P (Z_t \mid O_{1:t-1}) = \int_{Z_{t-1}} \int_{C_t} P (Z_t, C_t \mid Z_{t-1}) dC_t P (Z_{t-1} \mid O_{1:t-1}) dZ_{t-1}$
 
 - **Update (Bayes):**  
-$P (Z_t \mid O^1_{1:t}) = \frac{P (O_t \mid Z_t) P (Z_t \mid O_{1:t-1})}{P (O_t \mid O_{1:t-1})}$
+$P (Z_t \mid O_{1:t}) = \frac{P (O_t \mid Z_t) P (Z_t \mid O_{1:t-1})}{P (O_t \mid O_{1:t-1})}$
 
 The resulting metamodel outputs mean and standard deviation for all original state variables and the coupling variable.
 
