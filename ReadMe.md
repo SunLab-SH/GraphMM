@@ -48,7 +48,7 @@ Choose a universal time step $\Delta t$ (e.g., the smallest native time step).
 - For a model with a **smaller** native time step, redefine the process model at $\Delta t$ using the original forward function; the observation model is subsampled or interpolated.  
 - For a model with a **larger** native time step, also redefine the process model at $\Delta t$; the observation model is linearly interpolated (if experimental data exist) or kept identical.
 
-## Step 4 – Couple the two surrogates via the shared variable
+## Step 4 – Couple the two surrogates *via* the shared variable
 
 Let the connecting variables be $b^1$ (from $M1$) and $b^2$ (from $M2$).  
 Assume Gaussian distributions at each time step: $p(b^1_t) = N(\mu^{b1},\sigma^{b1})$, $p(b^2_t) = N(\mu^{b2},\sigma^{b2})$.
@@ -87,14 +87,14 @@ Build a factor graph containing all state variables $Z^i$ and the coupling varia
 Recursively apply the predict‑update cycle:
 
 - **Predict:**  
-$P (Z_t \mid O_{1:t-1}) = \int_{Z_{t-1}} \int_{C_t} P (Z_t, C_t \mid Z_{t-1}) dC_t P (Z_{t-1} \mid O_{1:t-1}) dZ_{t-1}$
+$P (Z_t \mid O_{1:t-1}) = \int_{Z_{t-1}} \int_{c_t} P (Z_t, C_t \mid Z_{t-1}) dC_t P (Z_{t-1} \mid O_{1:t-1}) dZ_{t-1}$
 
 - **Update (Bayes):**  
-$P (Z_t \mid O_{1:t}) = \frac{P (O_t \mid Z_t) P (Z_t \mid O_{1:t-1})}{P (O_t \mid O_{1:t-1})}$
+$P (Z_t \mid O^1_{1:t}) = \frac{P (O_t \mid Z_t) P (Z_t \mid O_{1:t-1})}{P (O_t \mid O_{1:t-1})}$
 
 The resulting metamodel outputs mean and standard deviation for all original state variables and the coupling variable.
 
-## Step 6 – Practical recommendations
+## Notes for other applications
 
 - **Connecting variable selection:** If the two models do not share an identical variable, choose the pair with the highest Pearson correlation coefficient (as in the VE‑ISK coupling in the paper).
 - **Time‑step selection:** Ensure the ODE solver remains stable at the chosen universal time step.
