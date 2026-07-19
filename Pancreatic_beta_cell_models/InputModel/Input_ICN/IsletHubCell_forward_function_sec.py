@@ -8,10 +8,10 @@ from math import *
 import numpy as np
 import time
 from scipy.integrate import odeint
-from InputModel.Input_IHC.IsletHubCell_parameter import figInit
+from InputModel.Input_IHC.IsletHubCell_parameter import fig7Init
 
 def Init():
-    return figInit()
+    return fig7Init()
 
 
 def _f_input_ode_ICN(x, dt):
