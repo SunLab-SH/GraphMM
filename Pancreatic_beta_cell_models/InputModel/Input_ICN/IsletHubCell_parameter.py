@@ -2,7 +2,7 @@ import math
 import scipy.io
 import numpy as np
 
-Para = scipy.io.loadmat('./InputModel/Input_ICN/Fig7Parameters.mat')
+Para = scipy.io.loadmat('./Fig7Parameters.mat')
 hub = 0;
 
 '''STEP 1: Parameter set up '''
