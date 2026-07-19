@@ -25,7 +25,7 @@ def silencingSSCM(param, hub):
     # %               Columns 3*N+1:4*N- Calcium
 
     # %STEP 1: Parameter set up
-    SimTime=300 # simulation time in seconds
+    SimTime=600 # simulation time in seconds
     
     gkatp = param['gkatp'].reshape(-1,)
     # gkatp_mean = 15
@@ -60,7 +60,7 @@ def silencingSSCM(param, hub):
     # x0[:57] = [-70]*57
     
     # %STEP 2: Define model equations and solve system
-    time = np.linspace(0, SimTime, 10000)
+    time = np.linspace(0, SimTime, 20000)
     result = odeint(odefunc, x0, time, args=(kca, gca, gkatp, gk, gs, N, M, hub))
                 
     return result
@@ -162,3 +162,16 @@ def computeFuncConn(t, Ca, N):
                 
     return F.transpose()+F
 
+
+# %%
+FigPara = scipy.io.loadmat('./Fig7Parameters.mat')
+result = silencingSSCM(FigPara, []) # without silencing
+result = silencingSSCM(FigPara, [10]) # silence cell 11
+
+
+for i in range(57):
+    fout = open('./Input_IHC_600s_N57/input_IHC_cell_{}.csv'.format(i), 'w')
+    print(*['V', 'n', 's', 'Ca'], file=fout, sep=',')
+    for line in result:
+        print(*[line[i], line[i+57], line[i+57*2], line[i+57*3]], file=fout, sep=',')
+    fout.close()
