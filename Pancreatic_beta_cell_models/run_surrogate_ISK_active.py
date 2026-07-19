@@ -62,7 +62,7 @@ def fx_ISK(x, dt, step, V_list):
     xout = [V_t] + ode_out[-1].tolist()
     return np.array(xout)
 
-class SurrogateISK:
+class Surrogate_ISK:
     def __init__(self):
         self.model = None
 
@@ -83,8 +83,8 @@ def run(cell_number, config):
         output_dir = config['output_filepath']
         os.makedirs(output_dir, exist_ok=True)
         
-        cell_potential = np.genfromtxt(config['input_path']+f'/input_ICN_cell_{cell_number}.csv',
-                                       delimiter=',',skip_header=1, max_rows=10000).reshape(10000, -1)[:, 0]
+        cell_potential = np.genfromtxt(config['input_path']+f'/input_IHC_cell_{cell_number}.csv',
+                                       delimiter=',',skip_header=1, max_rows=20000).reshape(20000, -1)[:, 0]
         steps = int(float(config['total_time'] // float(config['dt'])))+ 1
         print(type(config['measure_std_scale']))
         
@@ -92,10 +92,10 @@ def run(cell_number, config):
         V_mem = np.ones(steps)*(-70)
         for s,e in ton_lst: V_mem[s:e] += 50
         
-        surrogate_ISK = SurrogateISK()
+        surrogate_ISK = Surrogate_ISK()
         surrogate_ISK.create_model(config)
         surrogate_ISK.model.inference(n_repeat=config['n_repeat'], verbose=config['verbose'],
-                                      output_filepath=f'{output_dir}/surrogate_ISK_300s_cell_{cell_number}.csv',
+                                      output_filepath=f'{output_dir}/surrogate_ISK_600s_cell_{cell_number}.csv',
                                       Vm=V_mem)
         logging.info(f"Successfully completed {__name__} for cell {cell_number}")
     except Exception as e:
