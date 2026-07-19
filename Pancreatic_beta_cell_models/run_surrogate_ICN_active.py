@@ -1,7 +1,8 @@
 from GraphMetamodel.utils import *
 from GraphMetamodel.DefineSurrogateModel_ICN import *
 from InputModel.Input_ICN.IsletHubCell_parameter import *
-import InputModel.Input_ICN.IsletHubCell_forward_function_sec as ICN
+import InputModel.Input_ICN.IsletHubCell_forward_function_sec as ICN  #if run surrogate, second unit
+# import InputModel.Input_ICN.IsletHubCell_forward_function as ICN  #if run metamodel, minute unit
 import os
 import logging
 import yaml
@@ -12,21 +13,20 @@ def create_state_variables(config):
     num_cells = config.get('num_cells', 57)  # Default to 57 if not specified
     for name in ['V', 'n', 's', 'Ca']:
         for i in range(num_cells):
-            state_variables.append(f'{name}{i}.ICN')
+            state_variables.append(f'{name}{i}.IHC')
     return state_variables
 
-class SurrogateICN:
+class SurrogateIHC:
     def __init__(self):
         self.model = None
 
     def create_model(self, config):
         state_variables = create_state_variables(config)
-        
         self.model = SurrogateInputModel(name='Islet Hub Cell', 
                                          state=state_variables,
-                                         initial=fig6Init(),
+                                         initial=IHC.Init(), 
                                          initial_noise_scale=config['initial_noise_scale'],
-                                         fx=ICN._fx_ICN, 
+                                         fx=IHC._fx_IHC, 
                                          dt=config['dt'], 
                                          input_dt=config['input_dt'], 
                                          total_time=config['total_time'],
@@ -41,9 +41,9 @@ def run(config):
         output_dir = config['output_filepath']
         os.makedirs(output_dir, exist_ok=True)
         
-        surrogate_ICN = SurrogateICN()
-        surrogate_ICN.create_model(config)
-        surrogate_ICN.model.inference(n_repeat=config['n_repeat'], 
+        surrogate_IHC = SurrogateIHC()
+        surrogate_IHC.create_model(config)
+        surrogate_IHC.model.inference(n_repeat=config['n_repeat'], 
                                       verbose=config['verbose'],
                                       obs_from_input=config['obs_from_input'],
                                       filepath=output_dir)
@@ -53,10 +53,10 @@ def run(config):
         raise
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run surrogate ICN model")
+    parser = argparse.ArgumentParser(description="Run surrogate IHC model")
     args = parser.parse_args()
     
     with open('config.yaml', 'r') as config_file:
-        config = yaml.safe_load(config_file)['ICN']
+        config = yaml.safe_load(config_file)['IHC']
     
     run(config)
