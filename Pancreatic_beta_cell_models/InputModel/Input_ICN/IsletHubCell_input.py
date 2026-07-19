@@ -166,7 +166,7 @@ def computeFuncConn(t, Ca, N):
 # %%
 FigPara = scipy.io.loadmat('./Fig7Parameters.mat')
 result = silencingSSCM(FigPara, []) # without silencing
-result = silencingSSCM(FigPara, [10]) # silence cell 11
+# result = silencingSSCM(FigPara, [10]) # silence cell 11
 
 
 for i in range(57):
