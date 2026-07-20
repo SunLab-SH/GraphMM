@@ -163,7 +163,7 @@ python visulize.py
 ```
 
 
-### Multiscale β-cell metamodel (MuBCM)
+### Pancreatic β-cell metamodel
 * 1. Prepare and check input model:
 ```bash
 cd InputModel/Input_ICN  # Firstly, run ICN input model to get potential of cells 
@@ -181,7 +181,7 @@ Surrogate results will be saved in the `'./results/surrogate_{cell_number}_600s_
 
 * 3. Run metamodel of the three surrogate models
 ```bash
-python run_MuBCM_metamodel_active.py  # The units of the ICN model will be unified to minutes.
+python run_musis_metamodel_active.py  # The units of the ICN model will be unified to minutes.
 ```
 Metamodel results will be saved in the `'./results/Metamodel_VE_ICN_ISK_600s_nohub/` directory.
 All variable values of the three models after metamodel updating will be stored in Metamodel_VE_IHC_ISK_600s_nohub_{cell_number}.csv files, with one column for the mean and one column for the standard deviation. Since each Metamodel_VE_IHC_ISK_600s_nohub_{cell_number}.csv file is very large, you can extract the columns of interest as needed.
