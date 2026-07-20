@@ -105,15 +105,15 @@ For a complete runnable implementation of this protocol, refer to the `Benchmark
 
 # Repo Structure
 
-The project contains a benchmark and a Multiscale β-cell metamodel (MuBCM), both using the GraphMM modeling framework. The project structure is as follows:
+The project contains a benchmark and a pancreatic β-cell metamodel, both using the GraphMM modeling framework. The project structure is as follows:
 1. `Benchmark/`: Contains the benchmark toy system for GraphMM using a toy GSIS model.  
 **Quick start**: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1mmF2elmdj9g20Y7XFUviKmAUEDBGiv6K?usp=sharing)
    
 
-2. `GraphMM_MuBCM/`: The main package for GraphMM
+2. `Pancreatic_beta_cell_models/`: The main package for GraphMM
      - `InputModel/`:
         - Contains subsystem models 
-    - `GraphMetamodel/`:
+    - `Surrogate_Metamodel/`:
         - Defines connections between surrogate models
         - Implements multi-scale inference
     - `results/`:
@@ -167,7 +167,7 @@ python visulize.py
 * 1. Prepare and check input model:
 ```bash
 cd InputModel/Input_ICN  # Firstly, run ICN input model to get potential of cells 
-python IsletHubCell_forward_function_sec.py # The unit of ICN model is 'second'
+python IsletHubCell_input.py # The unit of ICN model is 'second'
 ```
 Input results will be saved in the `'./InputModel/Input_ICN/input_ICN_600s_nohub/` directory.
 
