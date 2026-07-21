@@ -4,8 +4,8 @@
 '''
 
 import numpy as np
-from GraphMetamodel.utils import *
-from GraphMetamodel.DefineSurrogateModel_ISK import *
+from Surrogate_Metamodel.utils import *
+from Surrogate_Metamodel.DefineSurrogateModel_ISK import *
 import InputModel.Input_ISK.InsulinSecretionKinetic_forward_function_pm_ode as ISK  
 from scipy.integrate import odeint
 from scipy.interpolate import interp1d
