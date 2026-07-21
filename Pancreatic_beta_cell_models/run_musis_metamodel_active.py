@@ -4,8 +4,8 @@ import run_surrogate_VE_active as VE_s
 from run_surrogate_VE_active import SurrogateVE
 from run_surrogate_ISK_active import SurrogateISK
 from run_surrogate_ICN_active import SurrogateICN
-from GraphMetamodel.DefineCouplingGraph_3model import *
-import GraphMetamodel.MultiScaleInference_3model as MSI
+from Surrogate_Metamodel.DefineCouplingGraph_3model import *
+import Surrogate_Metamodel.MultiScaleInference_3model as MSI
 import yaml
 import os
 import numpy as np
