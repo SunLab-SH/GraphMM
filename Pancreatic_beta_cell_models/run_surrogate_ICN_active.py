@@ -1,5 +1,5 @@
-from GraphMetamodel.utils import *
-from GraphMetamodel.DefineSurrogateModel_ICN import *
+from Surrogate_Metamodel.utils import *
+from Surrogate_Metamodel.DefineSurrogateModel_ICN import *
 from InputModel.Input_ICN.IsletHubCell_parameter import *
 import InputModel.Input_ICN.IsletHubCell_forward_function_sec as ICN  #if run surrogate, second unit
 # import InputModel.Input_ICN.IsletHubCell_forward_function as ICN  #if run metamodel, minute unit
