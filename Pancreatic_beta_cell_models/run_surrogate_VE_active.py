@@ -4,8 +4,8 @@
 '''
 
 import numpy as np
-from GraphMetamodel.utils import *
-from GraphMetamodel.DefineSurrogateModel_VE import *
+from Surrogate_Metamodel.utils import *
+from Surrogate_Metamodel.DefineSurrogateModel_VE import *
 import InputModel.Input_VE.VesicleExocytosis_forward_function_G167_raw_potential as VE
 import logging
 import yaml
